@@ -20,8 +20,7 @@ public class Payment {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @Lob
-    @Column(name = "method", nullable = false)
+    @Column(name = "method", nullable = false, length = 32)
     private String method;
 
     @Column(name = "amount", nullable = false, precision = 10, scale = 2)
@@ -30,8 +29,7 @@ public class Payment {
     @Column(name = "paid_at", nullable = false)
     private Instant paidAt;
 
-    @Lob
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 32)
     private String status;
 
     public Integer getId() {

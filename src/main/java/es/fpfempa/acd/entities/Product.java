@@ -34,7 +34,13 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private Set<OrderItem> orderItems = new LinkedHashSet<>();
 
-    @ManyToMany(mappedBy = "products")
+    // Corregido: Product es el lado dueño de la relación ManyToMany
+    @ManyToMany
+    @JoinTable(
+            name = "product_categories",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
     private Set<Category> categories = new LinkedHashSet<>();
 
     public Integer getId() {

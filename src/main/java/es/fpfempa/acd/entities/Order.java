@@ -34,8 +34,7 @@ public class Order {
     @Column(name = "order_date", nullable = false)
     private Instant orderDate;
 
-    @Lob
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 32)
     private String status;
 
     @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)

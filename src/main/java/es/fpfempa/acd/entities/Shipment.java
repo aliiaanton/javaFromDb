@@ -28,8 +28,7 @@ public class Shipment {
     @Column(name = "shipped_at", nullable = false)
     private Instant shippedAt;
 
-    @Lob
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 32)
     private String status;
 
     public Integer getId() {

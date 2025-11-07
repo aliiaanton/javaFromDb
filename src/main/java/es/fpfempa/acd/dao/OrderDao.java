@@ -1,5 +1,6 @@
 package es.fpfempa.acd.dao;
 
+import es.fpfempa.acd.entities.Address;
 import es.fpfempa.acd.entities.Order;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -46,18 +47,33 @@ public class OrderDao {
 
     /**
      * Actualiza un pedido existente (para cambiar la dirección de envío)
-     * @param order Pedido a actualizar
+     * Estrategia: obtener el pedido gestionado y la dirección gestionada, asignar y commit.
      */
     public void update(Order order) {
         try {
             em.getTransaction().begin();
-            em.merge(order);
+
+            // 1) Pedido gestionado
+            Order managedOrder = em.find(Order.class, order.getId());
+            if (managedOrder == null) {
+                throw new IllegalArgumentException("Pedido no encontrado id=" + order.getId());
+            }
+
+            // 2) Dirección gestionada (si viene una)
+            if (order.getShippingAddress() != null && order.getShippingAddress().getId() != null) {
+                Address managedAddr = em.getReference(Address.class, order.getShippingAddress().getId());
+                managedOrder.setShippingAddress(managedAddr);
+            } else {
+                managedOrder.setShippingAddress(null);
+            }
+
+            // 3) Commit (flush implícito)
             em.getTransaction().commit();
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw new RuntimeException("Error al actualizar el pedido: " + e.getMessage());
+            throw new RuntimeException("Error al actualizar el pedido: " + e.getMessage(), e);
         }
     }
 }

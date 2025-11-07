@@ -43,8 +43,12 @@ public class OrderService {
         nuevaAddress.setCity(city);
         nuevaAddress.setCountry(country);
         nuevaAddress.setCustomer(customer);
-
+        // Persistimos
         addressDao.create(nuevaAddress);
+        // Mantener consistencia bidireccional en memoria
+        if (customer.getAddresses() != null) {
+            customer.getAddresses().add(nuevaAddress);
+        }
         return nuevaAddress;
     }
 
@@ -52,13 +56,10 @@ public class OrderService {
      * Cambia la dirección de envío de un pedido y lo actualiza
      */
     public void changeShippingAddress(Order order, Address newAddress) {
-        em.getTransaction().begin();
         try {
             order.setShippingAddress(newAddress);
-            orderDao.update(order);
-            em.getTransaction().commit();
+            orderDao.update(order); // Maneja la transacción internamente
         } catch (Exception e) {
-            em.getTransaction().rollback();
             throw new RuntimeException("Error al cambiar la dirección del pedido", e);
         }
     }
