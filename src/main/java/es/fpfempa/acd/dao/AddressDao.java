@@ -1,6 +1,7 @@
 package es.fpfempa.acd.dao;
 
 import es.fpfempa.acd.entities.Address;
+import es.fpfempa.acd.entities.Customer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
@@ -87,4 +88,13 @@ public class AddressDao {
             throw new RuntimeException("Error al eliminar la dirección: " + e.getMessage());
         }
     }
+
+    // para que te saque los datos del cliente enteros para que luego podamos sacar las direcciones que tiene
+    public List<Address> findByCustomer(Customer customer) {
+        String jpql = "SELECT a FROM Address a WHERE a.customer.id = :customerId";
+        TypedQuery<Address> query = em.createQuery(jpql, Address.class);
+        query.setParameter("customerId", customer.getId());
+        return query.getResultList();
+    }
+
 }
